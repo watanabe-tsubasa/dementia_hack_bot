@@ -1,33 +1,46 @@
 import { CheckIcon, SmallAddIcon, StarIcon } from "@chakra-ui/icons";
 import { Avatar, Box, Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, Flex, Heading, IconButton, Image, Text, VStack } from "@chakra-ui/react";
 import React, { useState } from "react"
-
+import { AudioPlayer } from "./AudioPlayer";
 
 function App() {
 
+  const handlePlayAudio = (src: string) => {
+    const audio = new Audio(src);
+    audio.play();
+  }
+
   const [ isAccounted, setIsAccounted ] = useState(false);
   const [ isInstore, setIsInstore ] = useState(false);
-  const handleSpeak = () => {
+  const handleSpeak = (word: string) => {
     // SpeechSynthesis APIの利用
-    const utterance = new SpeechSynthesisUtterance('こんばんは');
+    const utterance = new SpeechSynthesisUtterance(word);
     window.speechSynthesis.speak(utterance);
   };
 
   const onClickAccount = async () => {
+    // handleSpeak('お会計終わったから帰ろうね。')
+    handlePlayAudio("/account.mp3")
     setIsAccounted(true);
   }
 
   const onClickEnter = async () => {
     setIsInstore(true);
+    // handleSpeak('今日も楽しく買い物しようね。')
+    handlePlayAudio("/enter.mp3")
   }
 
   const onClickleave = async () => {
     if (isAccounted) {
-      
+      // handleSpeak('今日もお買い物楽しかったね！')
+      handlePlayAudio("/leave_correct.mp3")
+      setIsAccounted(false);
+    } else {
+      // handleSpeak('お店を出る前に何か忘れてないかな？')
+      handlePlayAudio("/leave_wrong.mp3")
     }
     setIsInstore(false);
   }
-
 
   return (
     <Box bg="gray.100">
@@ -55,7 +68,7 @@ function App() {
                 maxW="90%"
                 borderRadius='10px'
                 objectFit='cover'
-                src='/boy_1.png'
+                src='/girl_1.png'
                 alt='Chakra UI'
               />
             </Flex>
@@ -73,6 +86,7 @@ function App() {
               wrap='wrap'
               justifyContent='center'>
               <Button
+                onClick={onClickAccount}
                 flex='1'
                 fontSize='xl'
                 minW='200px'
@@ -84,10 +98,10 @@ function App() {
                 お会計する
               </Button>
               <ButtonGroup>
-                <Button flex='1' variant='ghost' leftIcon={<SmallAddIcon />}>
+                <Button onClick={onClickEnter} flex='1' variant='ghost' leftIcon={<SmallAddIcon />}>
                   入店
                 </Button>
-                <Button flex='1' variant='ghost' leftIcon={<CheckIcon />}>
+                <Button onClick={onClickleave} flex='1' variant='ghost' leftIcon={<CheckIcon />}>
                   退店
                 </Button>
               </ButtonGroup>
